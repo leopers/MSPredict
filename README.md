@@ -42,7 +42,7 @@ A financial transaction fraud prevention DS project following an agile methodolo
 1. Clone the repository:
 
    ```bash
-   git clone [https://github.com/yourusername/fraud_detection.git](https://github.com/leopers/Money-Saver-Preditor.git
+   git clone https://github.com/leopers/Money-Saver-Preditor.git
    cd Money-Saver-Preditor
    ```
 
