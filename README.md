@@ -42,8 +42,8 @@ A financial transaction fraud prevention DS project following an agile methodolo
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/fraud_detection.git
-   cd fraud_detection
+   git clone [https://github.com/yourusername/fraud_detection.git](https://github.com/leopers/Money-Saver-Preditor.git
+   cd Money-Saver-Preditor
    ```
 
 2. Create and activate a virtual environment:
