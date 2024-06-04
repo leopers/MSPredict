@@ -16,8 +16,8 @@ A financial transaction fraud prevention DS project following an agile methodolo
 │ ├── static/
 │ ├── templates/
 │ └── utils/
-│ ├── init.py
-│ └── data_preprocessing.py
+│   ├── init.py
+│   └── data_preprocessing.py
 ├── data/
 │ ├── raw/
 │ │ └── transactions.csv
