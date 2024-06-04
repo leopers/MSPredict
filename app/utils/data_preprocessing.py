@@ -4,7 +4,7 @@ class PreprocPipeline:
     Custom transformer for data preprocessing
     '''
     def __init__(self):
-        self.drop_columns = ['oldbalanceOrg', 'newbalanceOrig', 'oldbalanceDest', 'newbalanceDest', ' isFlaggedFraud']
+        self.drop_columns = ['oldbalanceOrg', 'newbalanceOrig', 'oldbalanceDest', 'newbalanceDest', 'isFlaggedFraud']
 
     def preprocess_data(self, data):
         '''
