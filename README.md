@@ -59,7 +59,13 @@ A financial transaction fraud prevention DS project following an agile methodolo
    pip install -r requirements.txt
    ```
 
-4. Run the Flask application:
+4. Make sure your python environment variable is setup correctly
+
+   ```bash
+   export PYTHONPATH=$(pwd)
+   ```
+
+5. Run the Flask application:
    ```bash
    python app/main.py
    ```
