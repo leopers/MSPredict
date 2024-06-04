@@ -99,7 +99,8 @@ The PaySim dataset is a synthetic dataset that simulates mobile money transactio
 - isFlaggedFraud: A binary indicator (0 or 1) indicating whether the transaction is flagged as a fraud attempt. The business model flags transactions that attempt to transfer more than 200,000 in a single 
   transaction as illegal.
   
-Note
+Note:
+
 Columns oldbalanceOrg, newbalanceOrig, oldbalanceDest, and newbalanceDest should not be used for fraud detection because transactions detected as fraud are canceled, which affects these balances.
 
 
