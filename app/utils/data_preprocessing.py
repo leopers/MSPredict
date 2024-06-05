@@ -1,86 +1,67 @@
 import pandas as pd
 import joblib
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
 
 class PreprocPipeline:
-    '''
-    Custom transformer for data preprocessing 
+    ''''
+    A transformer class to preprocess the data
     '''
     def __init__(self):
-        self.categorical = ['type']
-        self.numerical = ['amount', 'step', 'hour']
-        self.drop_columns = ['oldbalanceOrg', 'newbalanceOrig', 'oldbalanceDest', 'newbalanceDest', 'isFlaggedFraud', 'nameOrig', 'nameDest']
         self.scaler = StandardScaler()
-        self.fitted = False
-        #No need for imputers as there are no missing values in the dataset
+        self.encoder = OneHotEncoder(handle_unknown='ignore')
 
-    def create_features(self, data):
-        '''
-        Create new features from the existing ones
-        '''
-        data_copy = data.copy()
-        data_copy['hour'] = np.nan
-        data_copy.hour = data.step % 24
+        self.preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', self.scaler, self.numerical_features),
+                ('cat', self.encoder, self.categorical_features)
+            ]
+        )
 
-        
-        return data_copy
+        self.numerical_features = ['amount(usd)', 'lat', 'long', 'merch_lat', 'merch_long', 'age']
+        self.categorical_features = ['merchant', 'job', 'hour_of_day', 'month', 'day_of_week']
+
+
+    def select_features(self, X):
+        '''
+        Selects the features to be used in the model and prepares the training data
+        '''
+
+        X.set_index('transaction_id', inplace=True)
+        return X[['amount(usd)', 'lat', 'long', 'merch_lat', 'merch_long', 'age', 'merchant', 'job', 'hour_of_day', 'month', 'day_of_week']]
     
-    def scale_fit(self, data):
+    def fit(self, X):
         '''
-        Scale the numerical features
+        Fits the transformer to the data
         '''
-        data_copy = data.copy()
-        data_copy[self.numerical] = self.scaler.fit_transform(data_copy[self.numerical])
-        return data_copy
-    
-    def scale_tranform(self, data):
-        '''
-        Scale the numerical features
-        '''
-        data_copy = data.copy()
-        data_copy[self.numerical] = self.scaler.transform(data_copy[self.numerical])
-        return data_copy
 
-    def fit(self,  x_train):    
-        '''
-        Fit the transformer on input data
-        '''
-        x_copy = self.create_features(x_train)
-        x_copy = x_copy.drop(columns=self.drop_columns)
-        x_copy = pd.get_dummies(x_copy, columns=self.categorical)
-        x_copy = self.scale_fit(x_copy)
-        self.fitted = True
-        return self
+        X_copy = self.select_features(X)
+        self.preprocessor.fit(X_copy)
 
     def transform(self, X):
         '''
-        Preprocess the input data for model training
+        Transforms the data
         '''
-        if not self.fitted:
-            raise ValueError('Transformer must be fitted before transforming data')
-        X = self.create_features(X)
-        X = X.drop(columns=self.drop_columns)
-        X = pd.get_dummies(X, columns=self.categorical)
-        X = self.scale_tranform(X)
-        return X
-
+        X = self.select_features(X)
+        return self.preprocessor.transform(X)
+    
     def fit_transform(self, X):
         '''
-        Fit and transform the input data
+        Fits and transforms the data
         '''
-        self.fit(X)
-        return self.transform(X)
+        X = self.select_features(X)
+        return self.preprocessor.fit_transform(X)
     
     def save_pipeline(self):
         '''
-        Save the preprocessing pipeline
+        Saves the pipeline to disk
         '''
-        joblib.dump(self, 'models/preprocessing_pipeline.pkl')
-
+        joblib.dump(self, 'model/pipeline.pkl')
+    
     @staticmethod
     def load_pipeline():
         '''
-        Load the preprocessing pipeline
+        Loads the pipeline from disk
         '''
-        return joblib.load('models/pipeline/preprocessing_pipeline.pkl')
+        return joblib.load('model/pipeline.pkl')
