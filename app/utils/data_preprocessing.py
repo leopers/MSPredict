@@ -3,12 +3,13 @@ import joblib
 from sklearn.preprocessing import StandardScaler
 class PreprocPipeline:
     '''
-    Custom transformer for data preprocessing
+    Custom transformer for data preprocessing 
     '''
     def __init__(self):
-        # Our training dataset has only numerical features
-        self._scaler = StandardScaler()
-        self.drop_columns = ['nameOrig', 'nameDest', 'isFraud', 'isFlaggedFraud']
+        self.__categorical = ['type', 'nameOrig', 'nameDest']
+        self.__numerical = ['amount', 'oldbalanceOrg', 'newbalanceOrig', 'oldbalanceDest', 'newbalanceDest', 'step']
+        self.__scaler = StandardScaler()
+        self.drop_columns = ['oldbalanceOrg', 'newbalanceOrig', 'oldbalanceDest', 'newbalanceDest', 'isFLaggedFraud']
         self.fitted = False
         #No need for imputers as there are no missing values in the dataset
 
