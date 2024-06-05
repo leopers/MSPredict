@@ -1,28 +1,57 @@
 import pandas as pd
 import joblib
+import numpy as np
 from sklearn.preprocessing import StandardScaler
+
 class PreprocPipeline:
     '''
     Custom transformer for data preprocessing 
     '''
     def __init__(self):
-        self.__categorical = ['type', 'nameOrig', 'nameDest']
-        self.__numerical = ['amount', 'oldbalanceOrg', 'newbalanceOrig', 'oldbalanceDest', 'newbalanceDest', 'step']
-        self.__scaler = StandardScaler()
-        self.drop_columns = ['oldbalanceOrg', 'newbalanceOrig', 'oldbalanceDest', 'newbalanceDest', 'isFLaggedFraud']
+        self.categorical = ['type']
+        self.numerical = ['amount', 'step', 'hour']
+        self.drop_columns = ['oldbalanceOrg', 'newbalanceOrig', 'oldbalanceDest', 'newbalanceDest', 'isFlaggedFraud', 'nameOrig', 'nameDest']
+        self.scaler = StandardScaler()
         self.fitted = False
         #No need for imputers as there are no missing values in the dataset
 
+    def create_features(self, data):
+        '''
+        Create new features from the existing ones
+        '''
+        data_copy = data.copy()
+        data_copy['hour'] = np.nan
+        data_copy.hour = data.step % 24
 
-    def fit(self,  X_train):    
+        
+        return data_copy
+    
+    def scale_fit(self, data):
+        '''
+        Scale the numerical features
+        '''
+        data_copy = data.copy()
+        data_copy[self.numerical] = self.scaler.fit_transform(data_copy[self.numerical])
+        return data_copy
+    
+    def scale_tranform(self, data):
+        '''
+        Scale the numerical features
+        '''
+        data_copy = data.copy()
+        data_copy[self.numerical] = self.scaler.transform(data_copy[self.numerical])
+        return data_copy
+
+    def fit(self,  x_train):    
         '''
         Fit the transformer on input data
         '''
-        X_copy = X_train.drop(columns=self.drop_columns)
-        X_copy = pd.DataFrame(self._scaler.fit_transform(X_train))
+        x_copy = self.create_features(x_train)
+        x_copy = x_copy.drop(columns=self.drop_columns)
+        x_copy = pd.get_dummies(x_copy, columns=self.categorical)
+        x_copy = self.scale_fit(x_copy)
         self.fitted = True
         return self
-    
 
     def transform(self, X):
         '''
@@ -30,25 +59,24 @@ class PreprocPipeline:
         '''
         if not self.fitted:
             raise ValueError('Transformer must be fitted before transforming data')
-        data = data.drop(columns=self.drop_columns)
-        X = pd.DataFrame(self._scaler.transform(X))
+        X = self.create_features(X)
+        X = X.drop(columns=self.drop_columns)
+        X = pd.get_dummies(X, columns=self.categorical)
+        X = self.scale_tranform(X)
         return X
-    
 
-    def encoder(self , y):
+    def fit_transform(self, X):
         '''
-        Encode the target variable
+        Fit and transform the input data
         '''
-        y = pd.get_dummies(y, drop_first=True)
-        return y
+        self.fit(X)
+        return self.transform(X)
     
-
     def save_pipeline(self):
         '''
         Save the preprocessing pipeline
         '''
         joblib.dump(self, 'models/preprocessing_pipeline.pkl')
-
 
     @staticmethod
     def load_pipeline():

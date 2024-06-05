@@ -6,7 +6,7 @@ data = pd.read_csv('data/raw/transactions.csv')
 
 # Preprocess the data
 pipeline = PreprocPipeline()
-processed_data = pipeline.preprocess_data(data)
+processed_data = pipeline.fit_transform(data)
 
 # Save the processed data
 processed_data.to_csv('data/processed/processed_transactions.csv', index=False)
