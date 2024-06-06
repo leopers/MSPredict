@@ -77,33 +77,36 @@ A financial transaction fraud prevention DS project following an agile methodolo
 
 ## Dataset description
 
-Dataset Description
-The PaySim dataset is a synthetic dataset that simulates mobile money transactions based on real financial logs. The dataset is scaled down to 1/4 of the original size for use on Kaggle.
+About the Dataset
+This is a simulated credit card transaction dataset containing legitimate and fraud transactions from the duration 1st Jan 2019 - 31st Dec 2020. It covers credit cards of 1000 customers doing transactions with a pool of 800 merchants.
 
-- Column Descriptions
-- step: A time unit in the simulation, where 1 step corresponds to 1 hour. The dataset covers a total of 744 steps, equivalent to 30 days.
-- type: Type of transaction, including the following categories:
-- CASH-IN: Cash deposit into an account.
-- CASH-OUT: Cash withdrawal from an account.
-- DEBIT: Direct debit transaction.
-- PAYMENT: Payment transaction.
-- TRANSFER: Transfer of funds from one account to another.
-- amount: The amount of money involved in the transaction, in local currency.
-- nameOrig: Identifier for the customer who initiated the transaction.
-- oldbalanceOrg: The initial balance of the customer's account before the transaction.
-- newbalanceOrig: The new balance of the customer's account after the transaction.
-- nameDest: Identifier for the recipient of the transaction.
-- oldbalanceDest: The initial balance of the recipient's account before the transaction.
-- newbalanceDest: The new balance of the recipient's account after the transaction.
-- isFraud: A binary indicator (0 or 1) indicating whether the transaction is fraudulent. Fraudulent transactions aim to profit by taking control of customer accounts and attempting to empty funds.
-- isFlaggedFraud: A binary indicator (0 or 1) indicating whether the transaction is flagged as a fraud attempt. The business model flags transactions that attempt to transfer more than 200,000 in a single 
-  transaction as illegal.
-  
-Note:
+Source of Simulation
+This was generated using [Sparkov Data Generation | Github](https://github.com/namebrandon/Sparkov_Data_Generation) tool created by Brandon Harris. This simulation was run for the duration - 1 Jan 2019 to 31 Dec 2020. The files were combined and converted into a standard format.
 
-Columns oldbalanceOrg, newbalanceOrig, oldbalanceDest, and newbalanceDest should not be used for fraud detection because transactions detected as fraud are canceled, which affects these balances.
+## Dataset Columns
 
-
+1. **`trans_date_trans_time`**: The date and time when the transaction occurred.
+2. **`cc_num`**: The credit card number used for the transaction.
+3. **`merchant`**: The name of the merchant where the transaction took place.
+4. **`category`**: The category of the merchant or transaction.
+5. **`amt`**: The amount of the transaction.
+6. **`first`**: The first name of the cardholder.
+7. **`last`**: The last name of the cardholder.
+8. **`gender`**: The gender of the cardholder.
+9. **`street`**: The street address of the cardholder.
+10. **`city`**: The city of the cardholder.
+11. **`state`**: The state of the cardholder.
+12. **`zip`**: The ZIP code of the cardholder.
+13. **`lat`**: The latitude coordinate of the cardholder's address.
+14. **`long`**: The longitude coordinate of the cardholder's address.
+15. **`city_pop`**: The population of the city where the cardholder resides.
+16. **`job`**: The occupation of the cardholder.
+17. **`dob`**: The date of birth of the cardholder.
+18. **`trans_num`**: A unique identifier for the transaction.
+19. **`unix_time`**: The transaction time in Unix time format.
+20. **`merch_lat`**: The latitude coordinate of the merchant's location.
+21. **`merch_long`**: The longitude coordinate of the merchant's location.
+22. **`is_fraud`**: A binary indicator of whether the transaction is fraudulent (1) or not (0).
 
 ## License
 
