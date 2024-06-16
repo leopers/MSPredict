@@ -163,3 +163,5 @@ cython_debug/
 
 # Data Folder 
 data/
+
+ntbks/
