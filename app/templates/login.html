@@ -6,9 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
-        /* Inline styles specific to this page */
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
@@ -16,10 +15,14 @@
             color: #333;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         .container {
             max-width: 400px;
-            margin: 0 auto;
+            width: 100%;
             padding: 2rem;
             background-color: #fff;
             border-radius: 8px;
@@ -39,6 +42,7 @@
         label {
             font-size: 1.2rem;
             margin-bottom: 0.5rem;
+            align-self: flex-start;
         }
         input[type="text"],
         input[type="password"] {
@@ -63,12 +67,19 @@
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+        .error {
+            color: red;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Login Page</h1>
-        <form action="#" method="POST">
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <form action="{{ url_for('main_bp.login') }}" method="POST">
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
             

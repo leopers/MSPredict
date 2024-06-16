@@ -1,8 +1,13 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, redirect,url_for, jsonify, render_template
 import joblib
 import pandas as pd
 
 main_bp = Blueprint('main_bp', __name__)
+
+USER_DATA = {
+    "username": "testuser",
+    "password": "testpass"
+}
 
 # Load the trained model
 #model = joblib.load('app/models/fraud_detection_model.pkl')
@@ -40,4 +45,22 @@ def home():
 
 @main_bp.route('/login')
 def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        if username == USER_DATA['username'] and password == USER_DATA['password']:
+            return redirect(url_for('main_bp.dashboard'))
+        else:
+            error = "Invalid username or password"
+            return render_template('login.html', error=error)
+    
     return render_template('login.html')
+
+@main_bp.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+@main_bp.route('/services')
+def register():
+    return render_template('services.html')
