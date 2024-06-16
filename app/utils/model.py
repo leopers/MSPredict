@@ -24,6 +24,12 @@ class Model(BaseEstimator, PreprocPipeline):
     def set_model(self, model):
         self.model = model 
 
+    def set_name(self, name):
+        self.name = name
+
+    def set_version(self, version):
+        self.version = version
+        
     def train(self, X, y):
         '''
         Trains the model
