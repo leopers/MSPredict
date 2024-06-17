@@ -1,16 +1,23 @@
 import os
+from random import Random
 import joblib
 from sklearn.base import BaseEstimator
 from app.utils.data_preprocessing import PreprocPipeline
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline, make_pipeline
+from imblearn.under_sampling import RandomUnderSampler
+from imblearn.over_sampling import SMOTE
 
 class Model(BaseEstimator, PreprocPipeline):
-    def __init__(self, model):
+    def __init__(self, model, resample_rs=42, model_rs = 13):
         super().__init__()
 
         self.name = 'model'
         self.version = '1.0.0'
+        self.resampler_rs = resample_rs
+        self.model_rs = model_rs
         self.model = model
+        self.undersampler = RandomUnderSampler(sampling_strategy = 0.1 , random_state = self.resampler_rs) # type: ignore
+        self.oversampler = SMOTE(sampling_strategy= 'auto', random_state = self.resampler_rs)
 
     def get_name(self):
         return self.name
@@ -29,13 +36,21 @@ class Model(BaseEstimator, PreprocPipeline):
 
     def set_version(self, version):
         self.version = version
-        
+
     def train(self, X, y):
         '''
         Trains the model
         '''
+
+        # Preprocess the data  
         X = self.fit_transform(X)
+        # Resample the data
+        X, y = self.undersampler.fit_resample(X, y) # type: ignore
+        X, y = self.oversampler.fit_resample(X, y) # type: ignore
+        # Train the model
         self.model.fit(X, y)
+        return self
+
 
     def predict(self, X):
         '''
@@ -43,6 +58,13 @@ class Model(BaseEstimator, PreprocPipeline):
         '''
         X = self.transform(X)
         return self.model.predict(X)
+    
+    def score(self, X, y):
+        '''
+        Scores the model
+        '''
+        X = self.transform(X)
+        return self.model.score(X, y)
 
     def save_model(self, filepath='model/model.pkl', overwrite=True):
         '''

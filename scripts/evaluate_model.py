@@ -1,20 +1,12 @@
 import pandas as pd
-from sklearn.metrics import classification_report, roc_auc_score
-import joblib
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import make_scorer, f1_score
+from sklearn.model_selection import cross_val_score
 
-# Load the processed data
-data = pd.read_csv('data/processed/processed_transactions.csv')
+from app.utils.model import Model
+from app.utils.data_preprocessing import PreprocPipeline
 
-# Define features and target
-X = data.drop(columns=['isFraud'])
-y = data['isFraud']
-
-# Load the trained model
-model = joblib.load('app/models/fraud_detection_model.pkl')
-
-# Make predictions
-predictions = model.predict(X)
-
-# Evaluate the model
-print("Classification Report:\n", classification_report(y, predictions))
-print("ROC-AUC Score:", roc_auc_score(y, predictions))

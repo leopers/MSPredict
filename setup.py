@@ -11,5 +11,6 @@ setup(
         'scikit-learn',
         'joblib',
         'numpy',
+        'imbalanced-learn',
     ],
 )
