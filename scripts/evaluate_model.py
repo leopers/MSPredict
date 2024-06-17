@@ -6,7 +6,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
-from sklearn.metrics import make_scorer, f1_score
+from sklearn.metrics import make_scorer, f1_score, recall_score
 
 from app.utils.model import Model
 from app.utils.data_preprocessing import PreprocPipeline
@@ -18,10 +18,10 @@ X = df.drop('is_fraud', axis = 1)
 y = df['is_fraud']
 
 models = [
-    ('Logistic Regression', LogisticRegression(max_iter=1000, random_state=42)),
-    ('Decision Tree', DecisionTreeClassifier(random_state=42)),
-    ('Random Forest', RandomForestClassifier(random_state=42)),
-    ('SVM', SVC(random_state=42))
+    ('Logistic Regression', LogisticRegression(max_iter=10000, random_state=42)),
+    ('Decision Tree', DecisionTreeClassifier(random_state=42, max_depth=10)),
+    ('Random Forest', RandomForestClassifier(random_state=42, max_depth=10, n_estimators=100)),
+    ('SVM', SVC(random_state=42, kernel='rbf', C=1.0, gamma='scale'))
 ]
 
 #Stratifield KFold (10-fold cross validation)
@@ -35,10 +35,10 @@ def evaluate_model(models, X, y):
     for name, model in models:
         model = Model(model)
 
-        scores = cross_val_score(model, X, y, cv=skf, scoring=make_scorer(f1_score), n_jobs=-1)
+        scores = cross_val_score(model, X, y, cv=skf, scoring=make_scorer(recall_score), n_jobs=-1)
 
         results[name] = scores
-        print(f'{name} F1-Score: {np.mean(scores):.4f} (+/- {np.std(scores):.4f})')
+        print(f'{name} Recall Score: {np.mean(scores):.4f} (+/- {np.std(scores):.4f})')
 
     return results
 
