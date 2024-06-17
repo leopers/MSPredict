@@ -4,8 +4,6 @@ import pandas as pd
 
 main_bp = Blueprint('main_bp', __name__)
 
-users = {'user1': 'password1', 'user2': 'password2'}
-
 # Load the trained model
 #model = joblib.load('app/models/fraud_detection_model.pkl')
 
@@ -59,5 +57,16 @@ def dashboard():
     return render_template('dashboard.html')
 
 @main_bp.route('/services')
-def register():
+def services():
     return render_template('services.html')
+
+@main_bp.route('/about')
+def load_user_credentials():
+    csv_path = '../app/data/users.csv'
+    users_df = pd.read_csv(csv_path)
+    users_df['password'] = users_df['password'].astype(str)
+    users = dict(zip(users_df['username'], users_df['password']))
+    return users
+
+# Inicialize list 'users' with users info 
+users = load_user_credentials()
