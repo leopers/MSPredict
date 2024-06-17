@@ -7,17 +7,18 @@ from sklearn.pipeline import Pipeline, make_pipeline
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import SMOTE
 
-class Model(BaseEstimator, PreprocPipeline):
+class Model(BaseEstimator):
     def __init__(self, model, resample_rs=42, model_rs = 13):
         super().__init__()
 
         self.name = 'model'
         self.version = '1.0.0'
-        self.resampler_rs = resample_rs
+        self.resample_rs = resample_rs
         self.model_rs = model_rs
+        self.preprocessor = PreprocPipeline()
         self.model = model
-        self.undersampler = RandomUnderSampler(sampling_strategy = 0.1 , random_state = self.resampler_rs) # type: ignore
-        self.oversampler = SMOTE(sampling_strategy= 'auto', random_state = self.resampler_rs)
+        self.undersampler = RandomUnderSampler(sampling_strategy = 0.1 , random_state = self.resample_rs) # type: ignore
+        self.oversampler = SMOTE(sampling_strategy= 'auto', random_state = self.resample_rs)
 
     def get_name(self):
         return self.name
@@ -37,13 +38,13 @@ class Model(BaseEstimator, PreprocPipeline):
     def set_version(self, version):
         self.version = version
 
-    def train(self, X, y):
+    def fit(self, X, y):
         '''
         Trains the model
         '''
 
         # Preprocess the data  
-        X = self.fit_transform(X)
+        X = self.preprocessor.fit_transform(X)
         # Resample the data
         X, y = self.undersampler.fit_resample(X, y) # type: ignore
         X, y = self.oversampler.fit_resample(X, y) # type: ignore
@@ -56,14 +57,14 @@ class Model(BaseEstimator, PreprocPipeline):
         '''
         Predicts the target variable
         '''
-        X = self.transform(X)
+        X = self.preprocessor.transform(X)
         return self.model.predict(X)
     
     def score(self, X, y):
         '''
         Scores the model
         '''
-        X = self.transform(X)
+        X = self.preprocessor.transform(X)
         return self.model.score(X, y)
 
     def save_model(self, filepath='model/model.pkl', overwrite=True):
