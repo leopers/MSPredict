@@ -4,36 +4,6 @@ import pandas as pd
 
 main_bp = Blueprint('main_bp', __name__)
 
-# Load the trained model
-#model = joblib.load('app/models/fraud_detection_model.pkl')
-
-# Load the data
-#data = pd.read_csv('data/raw/transactions.csv')
-
-# Preprocess data (assuming you have preprocessing steps in a separate module)
-#from app.utils.data_preprocessing import preprocess_data
-#data = preprocess_data(data)
-
-# @main_bp.route('/query', methods=['GET'])
-# def query_transactions():
-#     customer_id = request.args.get('customer_id')
-#     start_time = int(request.args.get('start_time'))
-#     end_time = int(request.args.get('end_time'))
-    
-#     # Filter transactions for the given customer ID and time interval
-#     transactions = data[(data['nameOrig'] == customer_id) & (data['step'] >= start_time) & (data['step'] <= end_time)]
-    
-#     if transactions.empty:
-#         return jsonify({'message': 'No transactions found for the given criteria.'}), 404
-    
-#     # Predict fraud
-#     predictions = model.predict(transactions.drop(columns=['isFraud', 'nameOrig', 'nameDest']))
-    
-#     # Add predictions to the transactions DataFrame
-#     transactions['isFraud'] = predictions
-    
-#     return jsonify(transactions.to_dict(orient='records'))
-
 @main_bp.route('/')
 def home():
     return render_template('home.html')
@@ -54,13 +24,67 @@ def login():
 
 @main_bp.route('/dashboard', methods = ['GET', 'POST'])
 def dashboard():
-    return render_template('dashboard.html')
-
+    if 'username' in session:
+        return render_template('dashboard.html')
+    else:
+        flash('Please login first', 'danger')
+        return redirect(url_for('main_bp.login'))
+    
 @main_bp.route('/services')
 def services():
     return render_template('services.html')
 
-@main_bp.route('/about')
+# @main_bp.route('/about')
+# def load_user_credentials():
+#     csv_path = '../app/data/users.csv'
+#     users_df = pd.read_csv(csv_path)
+#     users_df['password'] = users_df['password'].astype(str)
+#     users = dict(zip(users_df['username'], users_df['password']))
+#     return users
+
+@main_bp.route('/form', methods=['GET', 'POST'])
+def form():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('INSERT INTO users (name, email) VALUES (%s, %s)', (name, email))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return redirect(url_for('main_bp.home'))
+    return render_template('form.html')
+
+@main_bp.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
+        file = request.files['file']
+        df = pd.read_csv(file)
+        df_columns = list(df)
+        columns = ','.join(df_columns)
+        values = "VALUES({})".format(",".join(["%s" for _ in df_columns]))
+        insert_stmt = f"INSERT INTO users ({columns}) {values}"
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        for _, row in df.iterrows():
+            cur.execute(insert_stmt, tuple(row))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return redirect(url_for('main_bp.home'))
+    return render_template('upload.html')
+
+@main_bp.route('/check_frauds')
+def check_frauds():
+    return render_template('check_frauds.html')
+
 def load_user_credentials():
     csv_path = '../app/data/users.csv'
     users_df = pd.read_csv(csv_path)
@@ -68,5 +92,9 @@ def load_user_credentials():
     users = dict(zip(users_df['username'], users_df['password']))
     return users
 
-# Inicialize list 'users' with users info 
+def get_db_connection():
+    params = config()
+    conn = psycopg2.connect(**params)
+    return conn
+
 users = load_user_credentials()

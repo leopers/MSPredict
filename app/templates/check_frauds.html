@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Check Possible Frauds</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,40 +20,44 @@
             padding: 40px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 400px;
         }
         .header {
             margin-bottom: 20px;
         }
-        .button-wrapper {
+        .fraud-list {
+            text-align: left;
             margin-top: 20px;
         }
-        .button {
-            display: block;
-            width: 200px;
-            padding: 15px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 10px auto;
-            transition: background-color 0.3s ease;
+        .fraud-item {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
         }
-        .button:hover {
-            background-color: #0056b3;
+        .fraud-item:hover {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1>Dashboard</h1>
+            <h1>Check Possible Frauds</h1>
         </header>
         
-        <div class="button-wrapper">
-            <a href="{{ url_for('main_bp.form') }}" class="button">Submit Info</a>
-            <a href="{{ url_for('main_bp.check_frauds') }}" class="button">Check Possible Frauds</a>
+        <div class="fraud-list">
+            <div class="fraud-item">
+                <h3>Transaction ID: 12345</h3>
+                <p>Amount: $100</p>
+                <p>Date: 2024-06-18</p>
+            </div>
+            <div class="fraud-item">
+                <h3>Transaction ID: 67890</h3>
+                <p>Amount: $500</p>
+                <p>Date: 2024-06-19</p>
+            </div>
+            <!-- Adicione mais itens de fraude conforme necessário -->
         </div>
     </div>
 </body>
