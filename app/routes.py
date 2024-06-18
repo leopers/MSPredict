@@ -3,13 +3,13 @@ import joblib
 import pandas as pd
 import psycopg2
 from psycopg2 import sql
-from data.database.config import config
+from app.database.config import config
 import random
 
 
 main_bp = Blueprint('main_bp', __name__)
 
-model = joblib.load('../model/pipeline.pkl')
+#model = joblib.load('../model/pipeline.pkl')
 
 @main_bp.route('/')
 def home():
@@ -176,7 +176,7 @@ def check_frauds():
     return render_template('check_frauds.html')
 
 def load_user_credentials():
-    csv_path = '../app/data/users.csv'
+    csv_path = 'app/data/users.csv'
     users_df = pd.read_csv(csv_path)
     users_df['password'] = users_df['password'].astype(str)
     users = dict(zip(users_df['username'], users_df['password']))

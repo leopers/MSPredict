@@ -20,10 +20,10 @@ model = Model(DecisionTreeClassifier(random_state=13,max_depth=10, class_weight=
 
 model.fit(X, y)
 
-model.save_model('models/decision_tree.pkl')
+model.save_model('app/models/deploy_model/decision_tree.pkl')
 
 # Load the model
-loaded_model = model.load_model('models/decision_tree.pkl')
+loaded_model = model.load_model('app/models/deploy_model/decision_tree.pkl')
 
 # Predict the target variable
 
