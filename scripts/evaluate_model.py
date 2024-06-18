@@ -43,3 +43,12 @@ def evaluate_model(models, X, y):
     return results
 
 results = evaluate_model(models, X, y)
+
+# Save the results of evaluation (and it's means and standard deviations per model) to a DataFrame
+
+results_df = pd.DataFrame(results)
+mean_results = pd.DataFrame()
+for model_name in results_df.columns:
+    mean_results[model_name] = [results_df[model_name].mean(), results_df[model_name].std()]
+
+mean_results.to_csv('data/results/evaluation_results.csv', index=False)
