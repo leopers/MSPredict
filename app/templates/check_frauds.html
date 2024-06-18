@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Frauds</title>
+</head>
+<body>
+    <h1>Check Frauds</h1>
+    <form method="post" action="/check_frauds">
+        <label for="transaction_time">Transaction Time:</label>
+        <input type="text" id="transaction_time" name="transaction_time" required><br><br>
+        
+        <label for="credit_card_number">Credit Card Number:</label>
+        <input type="text" id="credit_card_number" name="credit_card_number" required><br><br>
+        
+        <label for="merchant">Merchant:</label>
+        <input type="text" id="merchant" name="merchant" required><br><br>
+        
+        <label for="category">Category:</label>
+        <input type="text" id="category" name="category" required><br><br>
+        
+        <label for="amount">Amount:</label>
+        <input type="text" id="amount" name="amount" required><br><br>
+        
+        <button type="submit">Check Fraud</button>
+    </form>
+</body>
+</html>

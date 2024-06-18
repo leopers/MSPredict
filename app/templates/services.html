@@ -1,0 +1,54 @@
+<!-- app/templates/services.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services Page</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
+    <style>
+        /* Inline styles specific to this page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50vh;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+        }
+        .blue-section {
+            background-color: #007bff;
+        }
+        .white-section {
+            background-color: #fff;
+            color: #333;
+        }
+        .content {
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+    <div class="section blue-section">
+        <div class="content">
+            <h2>Add transactions to the database</h2>
+            <p>Adding transactions to the database involves the process of capturing and storing transactional data securely. This service enables users to input transaction details such as amount, date, transaction ID, and other relevant information through a user-friendly interface. The data is then processed and stored in a structured format within a PostgreSQL database.</p>
+        </div>
+    </div>
+    
+    <div class="section white-section">
+        <div class="content">
+            <h2>Verify if a transaction is fraudulent</h2>
+            <p>Verifying if a transaction is fraudulent involves leveraging advanced algorithms or machine learning models to analyze transactional data. This service aims to detect suspicious activities or patterns that deviate from normal transaction behaviors. By scrutinizing various factors such as transaction amount, frequency, and historical data, the system assesses the likelihood of fraudulence.</p>
+        </div>
+    </div>
+    
+</body>
+</html>

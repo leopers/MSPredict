@@ -162,7 +162,8 @@ cython_debug/
 #.idea/
 
 # Data Folder 
-data/
+data/processed
+data/raw
 
 ntbks/
 
