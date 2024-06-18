@@ -4,26 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check Frauds</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333333;
+        }
+
+        form {
+            display: grid;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555555;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Check Frauds</h1>
-    <form method="post" action="/check_frauds">
-        <label for="transaction_time">Transaction Time:</label>
-        <input type="text" id="transaction_time" name="transaction_time" required><br><br>
+    <div class="container">
+        <h1>Check Frauds</h1>
+        <form method="post" action="/check_frauds">
+            <label for="amount">Amount (USD):</label>
+            <input type="text" id="amount" name="amount" required><br>
         
-        <label for="credit_card_number">Credit Card Number:</label>
-        <input type="text" id="credit_card_number" name="credit_card_number" required><br><br>
+            <label for="lat">Latitude:</label>
+            <input type="text" id="lat" name="lat" required><br>
         
-        <label for="merchant">Merchant:</label>
-        <input type="text" id="merchant" name="merchant" required><br><br>
+            <label for="long">Longitude:</label>
+            <input type="text" id="long" name="long" required><br>
         
-        <label for="category">Category:</label>
-        <input type="text" id="category" name="category" required><br><br>
+            <label for="merch_lat">Merchant Latitude:</label>
+            <input type="text" id="merch_lat" name="merch_lat" required><br>
         
-        <label for="amount">Amount:</label>
-        <input type="text" id="amount" name="amount" required><br><br>
+            <label for="merch_long">Merchant Longitude:</label>
+            <input type="text" id="merch_long" name="merch_long" required><br>
         
-        <button type="submit">Check Fraud</button>
-    </form>
+            <label for="age">Age:</label>
+            <input type="text" id="age" name="age" required><br>
+        
+            <label for="merchant_name">Merchant Name:</label>
+            <input type="text" id="merchant_name" name="merchant_name" required><br>
+        
+            <label for="job">Job:</label>
+            <input type="text" id="job" name="job" required><br>
+        
+            <label for="hour_of_day">Hour of Day:</label>
+            <input type="text" id="hour_of_day" name="hour_of_day" required><br>
+        
+            <label for="month">Month:</label>
+            <input type="text" id="month" name="month" required><br>
+        
+            <label for="day_of_week">Day of Week:</label>
+            <input type="text" id="day_of_week" name="day_of_week" required><br>
+
+            <label for="transaction_id">transaction_id:</label>
+            <input type="text" id="transaction_id" name="transaction_id" required><br>
+        
+            <button type="submit">Check Fraud</button>
+        </form>
+    </div>
 </body>
 </html>

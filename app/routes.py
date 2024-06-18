@@ -5,6 +5,7 @@ import psycopg2
 from psycopg2 import sql
 from app.database.config import config
 import random
+from app.utils.model import Model
 
 
 main_bp = Blueprint('main_bp', __name__)
@@ -135,48 +136,76 @@ def upload():
         return redirect(url_for('main_bp.home'))
     return render_template('upload.html')
 
-def predict_fraud(transaction_time, credit_card_number, merchant, category, amount):
-    # Aqui você deve substituir por um modelo de predição real
-    # Esta é uma implementação simplificada para fins de demonstração
-    prediction = random.choice([0, 1])  # Simula uma predição aleatória (0 = Não fraudulento, 1 = Fraudulento)
-    return prediction
+def predict_fraud(amount, lat, long, merch_lat, merch_long, age, merchant, job, hour_of_day, month, day_of_week, transaction_id):
+    # Load the machine learning model
+    model = joblib.load('models/deploy_model/decision_tree.pkl')
+
+    # Assuming you have a pandas DataFrame with columns matching your model's input features
+    data = {
+        'amount(usd)': [amount],
+        'lat': [lat],
+        'long': [long],
+        'merch_lat': [merch_lat],
+        'merch_long': [merch_long],
+        'age': [age],
+        'merchant': [merchant],
+        'job': [job],
+        'hour_of_day': [hour_of_day],
+        'month': [month],
+        'day_of_week': [day_of_week],
+        'transaction_id': [transaction_id] 
+    }
+
+    df = pd.DataFrame(data)
+
+    # Make predictions
+    prediction = model.predict(df)
+    
+    # Assuming model.predict returns 1 for fraud and 0 for non-fraud
+    return prediction[0]
 
 @main_bp.route('/check_frauds', methods=['GET', 'POST'])
 def check_frauds():
     if request.method == 'POST':
         try:
             # Retrieve form data
-            transaction_time = request.form['transaction_time']
-            credit_card_number = request.form['credit_card_number']
-            merchant = request.form['merchant']
-            category = request.form['category']
             amount = float(request.form['amount'])
+            lat = float(request.form['lat'])
+            long = float(request.form['long'])
+            merch_lat = float(request.form['merch_lat'])
+            merch_long = float(request.form['merch_long'])
+            age = int(request.form['age'])
+            merchant = request.form['merchant_name']
+            job = request.form['job']
+            hour_of_day = int(request.form['hour_of_day'])
+            month = int(request.form['month'])
+            day_of_week = int(request.form['day_of_week'])
+            transaction_id = request.form['transaction_id']
 
-            # Prepare data for prediction (simulated here)
-            # Aqui você pode integrar com um modelo de machine learning real para fazer a predição
-            prediction = predict_fraud(transaction_time, credit_card_number, merchant, category, amount)
+            # Prepare data for prediction
+            prediction = predict_fraud(amount, lat, long, merch_lat, merch_long, age, merchant, job, hour_of_day, month, day_of_week, transaction_id)
 
             if prediction == 1:
                 fraud_status = 'Fraudulent'
             else:
                 fraud_status = 'Not Fraudulent'
 
-            # Gere um ID de transação fictício
-            transaction_id = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
-
+            # Generate a fictional transaction ID
+        
             return render_template('fraud_result.html', prediction=fraud_status, 
-                                   transaction_time=transaction_time, credit_card_number=credit_card_number,
-                                   merchant=merchant, category=category, amount=amount,
-                                   transaction_id=transaction_id)
+                                   amount=amount, lat=lat, long=long, merch_lat=merch_lat, merch_long=merch_long,
+                                   age=age, merchant=merchant, job=job, hour_of_day=hour_of_day, 
+                                   month=month, day_of_week=day_of_week)
         
         except Exception as e:
-            print(e)
+            print(f"Error in check_frauds: {e}")
             return "An error occurred while evaluating fraud."
 
     return render_template('check_frauds.html')
 
+
 def load_user_credentials():
-    csv_path = 'app/data/users.csv'
+    csv_path = '../app/data/users.csv'
     users_df = pd.read_csv(csv_path)
     users_df['password'] = users_df['password'].astype(str)
     users = dict(zip(users_df['username'], users_df['password']))
