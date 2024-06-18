@@ -1,21 +1,39 @@
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import recall_score, accuracy_score
 from sklearn.model_selection import train_test_split
 import joblib
+from sklearn.tree import DecisionTreeClassifier
+from imblearn.metrics import specificity_score
 
-# Load the processed data
-data = pd.read_csv('data/processed/processed_transactions.csv')
+from app.utils.model import Model
 
-# Define features and target
-X = data.drop(columns=['isFraud'])
-y = data['isFraud']
+data = pd.read_csv('data/processed/processed_train.csv')
+test_data = pd.read_csv('data/processed/processed_test.csv')
 
-# Split the data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X = data.drop('is_fraud', axis=1)
+y = data['is_fraud']
 
-# Train a Random Forest model
-rf = RandomForestClassifier()
-rf.fit(X_train, y_train)
+X_test = test_data.drop('is_fraud', axis=1)
+y_test = test_data['is_fraud']
 
-# Save the trained model
-joblib.dump(rf, 'app/models/fraud_detection_model.pkl')
+model = Model(DecisionTreeClassifier(random_state=13,max_depth=10, class_weight='balanced'))
+
+model.fit(X, y)
+
+model.save_model('models/decision_tree.pkl')
+
+# Load the model
+loaded_model = model.load_model('models/decision_tree.pkl')
+
+# Predict the target variable
+
+y_pred = loaded_model.predict(X_test)
+
+# Calculate scores
+recall = recall_score(y_test, y_pred)
+print(f'Recall Score: {recall:.4f}')
+accuracy_score = accuracy_score(y_test, y_pred)
+print(f'Accuracy Score: {accuracy_score:.4f}')
+specificity = specificity_score(y_test, y_pred)
+print(f'Specificity Score: {specificity:.4f}')
+
