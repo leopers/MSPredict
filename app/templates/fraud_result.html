@@ -4,16 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fraud Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .result-container {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .transaction-info {
+            margin-bottom: 10px;
+        }
+        .fraud-status {
+            font-weight: bold;
+            color: {{ status_color }}; /* Dynamically change color based on status */
+        }
+        .input-form {
+            margin-top: 20px;
+        }
+        .input-form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-form input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .input-form button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .input-form button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <h1>Fraud Result</h1>
-    <p><strong>Transaction Time:</strong> {{ transaction_time }}</p>
-    <p><strong>Credit Card Number:</strong> {{ credit_card_number }}</p>
-    <p><strong>Merchant:</strong> {{ merchant }}</p>
-    <p><strong>Category:</strong> {{ category }}</p>
-    <p><strong>Amount:</strong> ${{ amount }}</p>
-    <p><strong>Fraud Status:</strong> {{ prediction }}</p>
-    <p><strong>Transaction ID:</strong> {{ transaction_id }}</p>
+    
+    <div class="result-container">
+        <p class="transaction-info"><strong>Transaction Time:</strong> {{ transaction_time }}</p>
+        <p class="transaction-info"><strong>Credit Card Number:</strong> {{ credit_card_number }}</p>
+        <p class="transaction-info"><strong>Merchant:</strong> {{ merchant }}</p>
+        <p class="transaction-info"><strong>Category:</strong> {{ category }}</p>
+        <p class="transaction-info"><strong>Amount:</strong> ${{ amount }}</p>
+        <p class="transaction-info"><strong>Fraud Status:</strong> <span class="fraud-status">{{ prediction }}</span></p>
+        <p class="transaction-info"><strong>Transaction ID:</strong> {{ transaction_id }}</p>
+    </div>
+
+    <div class="input-form">
+        <form method="post" action="/submit_feedback">
+            <label for="feedback">Was the result alright? (Yes/No):</label>
+            <input type="text" id="feedback" name="feedback" required>
+            <input type="hidden" name="transaction_id" value="{{ transaction_id }}">
+            <input type="hidden" name="transaction_time" value="{{ transaction_time }}">
+            <input type="hidden" name="credit_card_number" value="{{ credit_card_number }}">
+            <input type="hidden" name="merchant" value="{{ merchant }}">
+            <input type="hidden" name="category" value="{{ category }}">
+            <input type="hidden" name="amount" value="{{ amount }}">
+            <button type="submit">Submit Feedback and go back to services</button>
+        </form>
+    </div>
+
     <a href="/check_frauds">Check another transaction</a>
 </body>
 </html>

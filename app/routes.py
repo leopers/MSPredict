@@ -6,6 +6,7 @@ from psycopg2 import sql
 from app.database.config import config
 import random
 from app.utils.model import Model
+import csv
 
 
 main_bp = Blueprint('main_bp', __name__)
@@ -164,6 +165,39 @@ def predict_fraud(amount, lat, long, merch_lat, merch_long, age, merchant, job, 
     # Assuming model.predict returns 1 for fraud and 0 for non-fraud
     return prediction[0]
 
+@main_bp.route('/submit_feedback', methods=['POST'])
+def submit_feedback():
+    if request.method == 'POST':
+        try:
+            # Retrieve form data from the feedback form
+            feedback = request.form['feedback']
+
+            # Retrieve transaction details passed from check_frauds
+            transaction_id = request.form['transaction_id']
+            transaction_time = request.form['transaction_time']
+            credit_card_number = request.form['credit_card_number']
+            merchant = request.form['merchant']
+            category = request.form['category']
+            amount = request.form['amount']
+
+
+            # Write feedback and transaction info to CSV
+            with open('../app/data/feedback.csv', mode='a') as file:
+                writer = csv.writer(file)
+                writer.writerow([transaction_id, transaction_time, credit_card_number, merchant, category, amount, feedback])
+
+            # Here you can process the feedback (e.g., store it in the database)
+            # Example: print feedback to console
+            print(f"Feedback for transaction {transaction_id}: {feedback}")
+
+            return redirect(url_for('main_bp.dashboard'))  # Redirect to home or another page after submitting feedback
+        
+        except Exception as e:
+            print(f"Error in submit_feedback: {e}")
+            return "An error occurred while submitting feedback."
+
+    return redirect(url_for('main_bp.home')) 
+
 @main_bp.route('/check_frauds', methods=['GET', 'POST'])
 def check_frauds():
     if request.method == 'POST':
@@ -195,7 +229,7 @@ def check_frauds():
             return render_template('fraud_result.html', prediction=fraud_status, 
                                    amount=amount, lat=lat, long=long, merch_lat=merch_lat, merch_long=merch_long,
                                    age=age, merchant=merchant, job=job, hour_of_day=hour_of_day, 
-                                   month=month, day_of_week=day_of_week)
+                                   month=month, day_of_week=day_of_week, transaction_id=transaction_id)
         
         except Exception as e:
             print(f"Error in check_frauds: {e}")
