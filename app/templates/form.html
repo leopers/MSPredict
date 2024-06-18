@@ -63,14 +63,30 @@
         </header>
         
         <form action="\submit" method="POST">
-            <label for="column1">Column 1:</label>
-            <input type="text" id="column1" name="column1" required><br><br>
+            <div class="form-group">
+                <label for="transaction_time">Transaction Time:</label>
+                <input type="text" id="transaction_time" name="transaction_time" required>
+            </div>
             
-            <label for="column2">Column 2:</label>
-            <input type="text" id="column2" name="column2" required><br><br>
+            <div class="form-group">
+                <label for="credit_card_number">Credit Card Number:</label>
+                <input type="text" id="credit_card_number" name="credit_card_number" required>
+            </div>
             
-            <label for="column3">Column 3:</label>
-            <input type="text" id="column3" name="column3" required><br><br>
+            <div class="form-group">
+                <label for="merchant">Merchant:</label>
+                <input type="text" id="merchant" name="merchant" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" id="category" name="category" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="text" id="amount" name="amount" required>
+            </div>
             
             <button type="submit">Submit</button>
         </form>

@@ -40,9 +40,11 @@ def services():
 def form():
     if request.method == 'POST':
         # Retrieve form data
-        column1 = request.form['column1']
-        column2 = request.form['column2']
-        column3 = request.form['column3']
+        transaction_time = request.form['transaction_time']
+        credit_card_number = request.form['credit_card_number']
+        merchant = request.form['merchant']
+        category = request.form['category']
+        amount = request.form['amount']
         
         # Insert data into PostgreSQL
         try:
@@ -51,8 +53,11 @@ def form():
             cursor = connection.cursor()
 
             # Construct the SQL query
-            insert_query = "INSERT INTO my_table (column1, column2, column3) VALUES (%s, %s, %s)"
-            cursor.execute(insert_query, (column1, column2, column3))
+            insert_query = """
+                INSERT INTO transactions (transaction_time, credit_card_number, merchant, category, amount, is_fraud, transaction_id)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(insert_query, (transaction_time, credit_card_number, merchant, category, amount))
             
             # Commit the transaction
             connection.commit()
@@ -61,13 +66,14 @@ def form():
             cursor.close()
             connection.close()
 
-            return redirect(url_for('main_bp.success'))
+            return redirect(url_for('success'))
         
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             return "An error occurred while inserting data into the database."
     
     return render_template('form.html')
+
 
 @main_bp.route('/success')
 def success():
