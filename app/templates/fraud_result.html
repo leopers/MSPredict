@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Result</title>
+</head>
+<body>
+    <h1>Fraud Result</h1>
+    <p><strong>Transaction Time:</strong> {{ transaction_time }}</p>
+    <p><strong>Credit Card Number:</strong> {{ credit_card_number }}</p>
+    <p><strong>Merchant:</strong> {{ merchant }}</p>
+    <p><strong>Category:</strong> {{ category }}</p>
+    <p><strong>Amount:</strong> ${{ amount }}</p>
+    <p><strong>Fraud Status:</strong> {{ prediction }}</p>
+    <p><strong>Transaction ID:</strong> {{ transaction_id }}</p>
+    <a href="/check_frauds">Check another transaction</a>
+</body>
+</html>

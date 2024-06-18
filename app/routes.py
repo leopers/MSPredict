@@ -1,6 +1,11 @@
 from flask import Blueprint, request, redirect,url_for, jsonify, render_template, request, session, flash
 import joblib
 import pandas as pd
+import psycopg2
+from psycopg2 import sql
+from data.database.config import config
+import random
+
 
 main_bp = Blueprint('main_bp', __name__)
 
@@ -36,6 +41,10 @@ def dashboard():
 def services():
     return render_template('services.html')
 
+def get_db_connection():
+    params = config()
+    return psycopg2.connect(**params)
+
 @main_bp.route('/form', methods=['GET', 'POST'])
 def form():
     if request.method == 'POST':
@@ -44,20 +53,36 @@ def form():
         credit_card_number = request.form['credit_card_number']
         merchant = request.form['merchant']
         category = request.form['category']
-        amount = request.form['amount']
+        amount = request.form['amount']  # Get amount as a string
+        is_fraud = request.form['is_fraud']
         
-        # Insert data into PostgreSQL
+        # Convert form data to appropriate types
         try:
-            params = config()
-            connection = psycopg2.connect(**params)
+            amount = float(amount)
+            credit_card_number = int(credit_card_number)
+            is_fraud = is_fraud.lower() in ['true', '1', 'yes', 'y']
+            is_fraud = bool(is_fraud)  # Ensure is_fraud is a boolean
+        except ValueError as e:
+            print(f"Value error: {e}")
+            return "Invalid input data format."
+
+        # Insert data into PostgreSQL
+        connection = None
+        try:
+            connection = get_db_connection()
             cursor = connection.cursor()
 
-            # Construct the SQL query
             insert_query = """
-                INSERT INTO transactions (transaction_time, credit_card_number, merchant, category, amount, is_fraud, transaction_id)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO transaction 
+            (transaction_time, credit_card_number, merchant, category, amount, is_fraud) 
+            VALUES 
+            (%s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(insert_query, (transaction_time, credit_card_number, merchant, category, amount))
+            
+            # Log the values being inserted
+            print(f"Inserting values: ({transaction_time}, {credit_card_number}, '{merchant}', '{category}', {amount}, {is_fraud})")
+            
+            cursor.execute(insert_query, (transaction_time, credit_card_number, merchant, category, amount, is_fraud))
             
             # Commit the transaction
             connection.commit()
@@ -66,11 +91,19 @@ def form():
             cursor.close()
             connection.close()
 
-            return redirect(url_for('success'))
+            return redirect(url_for('main_bp.success'))
         
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            print(f"Database error: {error}")
+            if connection:
+                connection.rollback()  # Rollback the transaction in case of error
             return "An error occurred while inserting data into the database."
+        
+        finally:
+            # Close connection
+            if connection:
+                connection.close()
+                print("PostgreSQL connection is closed")
     
     return render_template('form.html')
 
@@ -102,26 +135,39 @@ def upload():
         return redirect(url_for('main_bp.home'))
     return render_template('upload.html')
 
-@main_bp.route('/check_frauds')
+def predict_fraud(transaction_time, credit_card_number, merchant, category, amount):
+    # Aqui você deve substituir por um modelo de predição real
+    # Esta é uma implementação simplificada para fins de demonstração
+    prediction = random.choice([0, 1])  # Simula uma predição aleatória (0 = Não fraudulento, 1 = Fraudulento)
+    return prediction
+
+@main_bp.route('/check_frauds', methods=['GET', 'POST'])
 def check_frauds():
     if request.method == 'POST':
         try:
             # Retrieve form data
+            transaction_time = request.form['transaction_time']
+            credit_card_number = request.form['credit_card_number']
+            merchant = request.form['merchant']
+            category = request.form['category']
             amount = float(request.form['amount'])
-            date = pd.to_datetime(request.form['date'])
 
-            # Prepare data for prediction
-            transaction_data = pd.DataFrame({'amount': [amount], 'date': [date]})
-            
-            # Make prediction using the loaded model
-            prediction = model.predict(transaction_data)[0]
+            # Prepare data for prediction (simulated here)
+            # Aqui você pode integrar com um modelo de machine learning real para fazer a predição
+            prediction = predict_fraud(transaction_time, credit_card_number, merchant, category, amount)
 
             if prediction == 1:
                 fraud_status = 'Fraudulent'
             else:
                 fraud_status = 'Not Fraudulent'
 
-            return render_template('fraud_result.html', prediction=fraud_status, amount=amount, date=date)
+            # Gere um ID de transação fictício
+            transaction_id = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+
+            return render_template('fraud_result.html', prediction=fraud_status, 
+                                   transaction_time=transaction_time, credit_card_number=credit_card_number,
+                                   merchant=merchant, category=category, amount=amount,
+                                   transaction_id=transaction_id)
         
         except Exception as e:
             print(e)
