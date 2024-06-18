@@ -2,6 +2,7 @@ import os
 from random import Random
 import joblib
 from sklearn.base import BaseEstimator
+from sklearn.tree import DecisionTreeClassifier
 from app.utils.data_preprocessing import PreprocPipeline
 from sklearn.pipeline import Pipeline, make_pipeline
 from imblearn.under_sampling import RandomUnderSampler
@@ -11,7 +12,7 @@ class Model(BaseEstimator):
     def __init__(self, model, resample_rs=42, model_rs = 13):
         super().__init__()
 
-        self.name = 'model'
+        self.name = 'Fraud Detection Model'
         self.version = '1.0.0'
         self.resample_rs = resample_rs
         self.model_rs = model_rs
