@@ -7,30 +7,31 @@ A financial transaction fraud prevention DS project following an agile methodolo
 ```
 .
 ├── app/
-│ ├── init.py
+│ ├── __init__.py
 │ ├── main.py
 │ ├── routes.py
 │ ├── models/
-│ │ ├── init.py
-│ │ └── fraud_detection_model.pkl
-│ ├── static/
+│ │ ├── __init__.py
+│ │ └── deploy_model/
+│      ├── decision_tree.pkl
+│      └── fraud_detection_model.pkl
 │ ├── templates/
 │ └── utils/
-│   ├── init.py
+│   ├── __init__.py
+    ├── model.py
 │   └── data_preprocessing.py
 ├── data/
 │ ├── raw/
 │ │ └── transactions.csv
 │ ├── processed/
 │ │ └── processed_transactions.csv
-├── notebooks/
-│ ├── EDA.ipynb
-│ ├── model_training.ipynb
-│ └── model_evaluation.ipynb
+│ ├── results/
+│ │ └── evaluation_results.csv
 ├── scripts/
 │ ├── preprocess_data.py
 │ ├── train_model.py
 │ └── evaluate_model.py
+├── tests/
 ├── .gitignore
 ├── README.md
 ├── requirements.txt
@@ -73,7 +74,7 @@ A financial transaction fraud prevention DS project following an agile methodolo
 ## Usage
 
 - Access the web application at `http://localhost:5000`
-- Provide customer ID and time interval to query transactions and check for fraud.
+- You can either check for fraud on a specific and existent transaction or even add new transactions to our database.
 
 ## Dataset description
 
