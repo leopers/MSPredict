@@ -169,3 +169,5 @@ ntbks/
 
 # Ignore all .ipynb files
 *.ipynb
+
+*.csv
